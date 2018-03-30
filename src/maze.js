@@ -1,187 +1,102 @@
-let keypress = require('keypress')
- ,  console  = require('better-console');
+import Cell from './Cell';
 
-keypress(process.stdin);
-process.stdin.setRawMode(true);
-process.stdin.resume();
+/**
+ * Class representation of a Maze, comprised of rows/columns of Cells.
+ */
+export default class Maze {
 
+    /**
+     * Constructor for a maze, creates basic maze.
+     * @param width desired width of the maze
+     * @param height desried height of the maze
+     */
+    constructor(width, height) {
 
+        // set inputs
+        this.width = width;
+        this.height = height;
+        this.totalCells = width*height;
+        this.grid = [];
 
-function initVisited (width, height) {
-  let visited = [];
-
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      if (typeof visited[x] === 'undefined') {
-        visited[x] = [];
-      }
-      visited[x][y] = 0;
-    }
-  }
-
-  visited[0][0] = 1;
-
-  return visited;
-}
-
-function drawMap() {
-  let lines = [];
-  let line;
-  let line_bottom;
-  let cell;
-
-  for (let y = 0; y < height; y++) {
-    // prepend top
-    if (y === 0) {
-      line = '+';
-      for (let x = 0; x < width; x++) {
-        line += '---+';
-      }
-      lines.push(line);
+        // loop initially to create rows
+        for (let i = 0; i < this.width; i++) {
+            this.grid[i] = [];
+            // loop for y to create columns, making a new cell at each index
+            for (let j = 0; j < this.height; j++) {
+                this.grid[i][j] = new Cell();
+            }
+        }
     }
 
-    line = '|';
-    line_bottom = '+';
-
-    for (let x = 0; x < width; x++) {
-      cell = maze[y][x];
-      if (currentPosition[1] === x && currentPosition[0] === y) {
-        line += ' @ ';
-      }
-      else {
-        line += '   ';
-      }
-      if (cell[1] && ((visited[x][y] || visited[x+1][y]) || easy)) {
-        line += ' ';
-      }
-      else {
-        line += '|';
-      }
-
-      if (cell[2] && ((visited[x][y] || visited[x][y+1]) || easy)) {
-        line_bottom += '   +';
-      }
-      else {
-        line_bottom += '---+';
-      }
+    getMaze() {
+        return this.grid;
     }
-    lines.push(line);
-    lines.push(line_bottom);
-  }
-  
-  console.clear();
-  lines.forEach(function (l) {
-    console.log(l);
-  });
-  checkStatus();
+
+    /**
+     * Method resets the Maze back to basic instantiation.
+     */
+    reset() {
+
+        // loop through all created Cells and reset each one
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
+                this.grid[i][j].reset();
+            }
+        }
+    }
+
+    /**
+     * Method runs through the basic maze and creates the layout.
+     * @desc uses the backtracking method to create the maze.
+     */
+    generate() {
+
+        // Set a random position to start from
+        let currentCell = [Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height)];
+        // set our path in order to backtrack
+        let path = [currentCell];
+        // set visited of current cell to true
+        this.grid[currentCell[0]][currentCell[1]].visited = true;
+
+        // Loop through all available cell positions
+        for (let visited = 1; visited < this.totalCells; visited++) {
+
+            // get all neighbouring cells
+            let potential = [[currentCell[0]-1, currentCell[1], "top", "bottom"],
+                [currentCell[0], currentCell[1]+1, "right", "left"],
+                [currentCell[0]+1, currentCell[1], "bottom", "top"],
+                [currentCell[0], currentCell[1]-1, "left", "right"]];
+            let neighbors = [];
+
+            // Determine if each neighboring cell is within grid, and whether it has already been visited
+            for (let k = 0; k < 4; k++) {
+                let currVisited = this.grid[potential[k][0]][potential[k][1]].visited;
+                if (potential[k][0] > -1 && potential[k][0] < this.width && potential[k][1] > -1 && potential[k][1] < this.height && !currVisited) {
+                    neighbors.push(potential[k]);
+                }
+            }
+
+            // If at least one active neighboring cell has been found
+            if (neighbors.length) {
+
+                // Choose one of the neighbors at random
+                let nextCell = neighbors[Math.floor(Math.random()*neighbors.length)];
+
+                // Remove the wall between the current cell and the chosen neighboring cell
+                this.grid[currentCell[0]][currentCell[1]][nextCell[2]] = 1;
+                this.grid[nextCell[0]][nextCell[1]][nextCell[3]] = 1;
+
+                // Mark the neighbor as visited, and set it as the current cell
+                this.grid[nextCell[0]][nextCell[1]].visited = true;
+                currentCell = [nextCell[0], nextCell[1]];
+
+                // push the newly visited to the cellpath
+                path.push(currentCell);
+            }
+            // Otherwise backtrack to last cell to find new path
+            else {
+                currentCell = path.pop();
+            }
+        }
+    }
 }
-
-function checkStatus() {
-  if (currentPosition[0] === (height - 1) && currentPosition[1] === (width - 1)) {
-    console.warn('You win!');
-    process.exit();
-  }
-}
-
-function logString(string) {
-    console.clear();
-    console.log(string);
-}
-
-
-let dimensions = process.argv.slice(2);
-let height = dimensions[1] || 10;
-let width = dimensions[0] || 10;
-let easy  = dimensions[2] || false;
-let currentPosition = [0, 0];
-let viewingMap = false;
-let visited = initVisited(width, height);
-let maze = newMaze(width, height);
-logString(maze[0][0].toString());
-
-process.stdin.on('keypress', function (ch, key) {
-  switch (key.name) {
-    case 'm':
-      if (!viewingMap) {
-        drawMap();
-      }
-      else {
-        logString(maze[currentPosition[0]][currentPosition[1]].toString());
-      }
-      viewingMap = !viewingMap;
-      break;
-    case 'e':
-      easy = !easy;
-      if (viewingMap) {
-        drawMap();
-      }
-      break;
-    case 'n':
-      maze = newMaze(width, height);
-      currentPosition = [0,0];
-      visited = initVisited(width, height);
-      if (viewingMap) {
-        drawMap();
-      }
-      else {
-        logString(maze[currentPosition[0]][currentPosition[1]].toString());
-        checkStatus();
-      }
-      break;
-    case 'up':
-      if (maze[currentPosition[0]][currentPosition[1]].top === 1) {
-        currentPosition[0]--;
-        visited[currentPosition[1]][currentPosition[0]] = 1;
-        if (viewingMap) {
-          drawMap();
-        }
-        else {
-          logString(maze[currentPosition[0]][currentPosition[1]].toString());
-          checkStatus();
-        }
-      }
-      break;
-    case 'down':
-      if (maze[currentPosition[0]][currentPosition[1]].bottom === 1) {
-        currentPosition[0]++;
-        visited[currentPosition[1]][currentPosition[0]] = 1;
-        if (viewingMap) {
-          drawMap();
-        }
-        else {
-          logString(maze[currentPosition[0]][currentPosition[1]].toString());
-          checkStatus();
-        }
-      }
-      break;
-    case 'left':
-      if (maze[currentPosition[0]][currentPosition[1]].left === 1) {
-        currentPosition[1]--;
-        visited[currentPosition[1]][currentPosition[0]] = 1;
-        if (viewingMap) {
-          drawMap();
-        }
-        else {
-          logString(maze[currentPosition[0]][currentPosition[1]].toString());
-          checkStatus();
-        }
-      }
-      break;
-    case 'right':
-      if (maze[currentPosition[0]][currentPosition[1]].right === 1) {
-        currentPosition[1]++;
-        visited[currentPosition[1]][currentPosition[0]] = 1;
-        if (viewingMap) {
-          drawMap();
-        }
-        else {
-          logString(maze[currentPosition[0]][currentPosition[1]].toString());
-          checkStatus();
-        }
-      }
-      break;
-  }
-  if (key && key.ctrl && key.name === 'c') {
-    process.exit();
-  }
-});

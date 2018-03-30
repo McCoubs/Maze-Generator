@@ -1,7 +1,22 @@
-
+/**
+ * Class representation of a Cell.
+ * @authour Spencer McCoubrey
+ */
 export default class Cell {
 
-    init() {
+    /**
+     * Constructor for a Cell obj, sets default props.
+     */
+    constructor() {
+
+        // set defaults
+        this.reset();
+    }
+
+    /**
+     * Method sets all the Cells props back to default.
+     */
+    reset() {
         this.top = 0;
         this.bottom = 0;
         this.left = 0;
@@ -10,10 +25,11 @@ export default class Cell {
     }
 
     /**
-     * Method returns the string visual representation of a cell.
-     * @returns {string} string representation of a cell
+     * Method returns the string visual representation of a Cell.
+     * @returns {string} string representation of a Cell
      */
     toString() {
+
         let stringImage = "";
 
         // check if each side is wall or door, and append proper string per case
