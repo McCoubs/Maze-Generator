@@ -1,0 +1,15 @@
+{
+  "name": "command-line-maze",
+  "version": "1.0.0",
+  "description": "Simple Command Line Maze Game",
+  "author": "Spencer McCoubrey spencemcc@gmail.com",
+  "dependencies": {
+    "keypress": "*",
+    "better-console": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "license": "MIT"
+}
