@@ -2,7 +2,7 @@
  * Class representation of a Cell.
  * @authour Spencer McCoubrey
  */
-export default class Cell {
+class Cell {
 
     /**
      * Constructor for a Cell obj, sets default props.
@@ -58,11 +58,13 @@ export default class Cell {
 
         // bottom permutations
         if (this.bottom === 0) {
-            stringImage += "+----------+\n|          |\n";
+            stringImage += "|          |\n+----------+\n";
         } else {
-            stringImage += "+--      --+\n|          |\n";
+            stringImage += "|          |\n+--      --+\n";
         }
 
         return stringImage;
     }
 }
+
+module.exports = Cell;

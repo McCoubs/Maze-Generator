@@ -1,9 +1,9 @@
-import Cell from './Cell';
+let Cell = require('./Cell');
 
 /**
  * Class representation of a Maze, comprised of rows/columns of Cells.
  */
-export default class Maze {
+class Maze {
 
     /**
      * Constructor for a maze, creates basic maze.
@@ -70,8 +70,7 @@ export default class Maze {
 
             // Determine if each neighboring cell is within grid, and whether it has already been visited
             for (let k = 0; k < 4; k++) {
-                let currVisited = this.grid[potential[k][0]][potential[k][1]].visited;
-                if (potential[k][0] > -1 && potential[k][0] < this.width && potential[k][1] > -1 && potential[k][1] < this.height && !currVisited) {
+                if (potential[k][0] > -1 && potential[k][0] < this.width && potential[k][1] > -1 && potential[k][1] < this.height && !this.grid[potential[k][0]][potential[k][1]].visited) {
                     neighbors.push(potential[k]);
                 }
             }
@@ -98,5 +97,8 @@ export default class Maze {
                 currentCell = path.pop();
             }
         }
+        return this;
     }
 }
+
+module.exports = Maze;

@@ -1,5 +1,4 @@
-import Maze from './Maze';
-
+let Maze = require('./Maze');
 let keypress = require('keypress');
 let console = require('better-console');
 
