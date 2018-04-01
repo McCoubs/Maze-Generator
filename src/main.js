@@ -126,11 +126,11 @@ function drawLargeMaze() {
     let line_bottom;
     let cell;
 
-    for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
         // prepend up
-        if (y === 0) {
+        if (x === 0) {
             line = '+';
-            for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
                 line += '---+';
             }
             lines.push(line);
@@ -139,27 +139,26 @@ function drawLargeMaze() {
         line = '|';
         line_bottom = '+';
 
-        for (let x = 0; x < width; x++) {
-            cell = maze.getCell(y, x);
+        for (let y = 0; y < height; y++) {
+            cell = maze.getCell(x, y);
 
-            if (currentPosition[1] === x && currentPosition[0] === y) {
+            if (currentPosition[0] === x && currentPosition[1] === y) {
                 line += ' @ ';
-            } else if (y === maze.finalRoom[0] && x === maze.finalRoom[1]) {
+            } else if (x === maze.finalRoom[0] && y === maze.finalRoom[1]) {
                 line += ' X ';
             } else {
                 line += '   ';
             }
-            if (cell[1] && ((visited[x][y] || visited[x+1][y]) || easy)) {
+
+            if (cell.getValue("right") && easy) {
                 line += ' ';
-            }
-            else {
+            } else {
                 line += '|';
             }
 
-            if (cell[2] && ((visited[x][y] || visited[x][y+1]) || easy)) {
+            if (cell.getValue("down") && easy) {
                 line_bottom += '   +';
-            }
-            else {
+            } else {
                 line_bottom += '---+';
             }
         }

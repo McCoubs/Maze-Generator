@@ -28,7 +28,7 @@ class Maze {
         }
     }
 
-    getMaze() {
+    getGrid() {
         return this.grid;
     }
 
@@ -101,16 +101,23 @@ class Maze {
 
                 // push the newly visited to the cellpath
                 path.push(currentCell);
-            }
+
             // Otherwise backtrack to last cell to find new path
-            else {
+            } else {
                 currentCell = path.pop();
             }
         }
+        // set final room and return context
         this.finalRoom = currentCell;
         return this;
     }
 
+    /**
+     * Method checks if supplied coordinates match Mazes final room
+     * @param x coordinate to check
+     * @param y coordinate to check
+     * @return {boolean} true if coordinates match the final room
+     */
     checkStatus(x, y) {
         return (x === this.finalRoom[0] && y === this.finalRoom[1]);
     }
