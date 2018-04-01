@@ -17,6 +17,7 @@ class Maze {
         this.height = height;
         this.totalCells = width*height;
         this.grid = [];
+        this.finalRoom = [-1, -1];
 
         // loop initially to create rows
         for (let i = 0; i < this.width; i++) {
@@ -52,6 +53,9 @@ class Maze {
                 this.getCell(i, j).reset();
             }
         }
+
+        // reset final room
+        this.finalRoom = [-1, -1];
     }
 
     /**

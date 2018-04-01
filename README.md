@@ -1,27 +1,60 @@
 # Maze-Generator
 
-- Defines a series of classes in Javascript in order to randomly generate a maze. 
-
-- A Maze is generated using the depth-first backtracking method, which explores a given path at random, and stores the path traveled in a stack. The script explores a path until not possible, at which time it "backtracks" by popping off the path travelled stack to continue along another path. 
-
-- The maze is a grid, comprised of Cell objects, defined within this repo as well.
-
-- All of the functionality within a Maze and Cells are defined within their methods and respective files 
+- Defines a series of classes in Javascript in order to randomly generate a maze 
+- A Maze is generated using the depth-first backtracking method, which explores a given path at random, and stores the path traveled in a stack. The script explores a path until not possible, at which time it "backtracks" by popping off the path travelled stack to continue along another path
+- All of the functionality within a Maze and Cells are defined here as well as within their respective methods and files 
 
 ## General Usage
 
 - To use the Maze or Cell classes, import them as your project needs
-- The constructor and the generate() method are the 2 basic uses of the Maze class
-  - all other methods and their prototypes are defined within the Maze Class
 
-### Constructor
+### Maze Class
+
+- A Maze simplified is an array, representing rows, comprised of arrays, representing columns, comprised of Cells as each node within the array
+- All getters and setters are not defined below, as they are simple enough as to not require explanation here
+
+#### `constructor(width, height)`
 
 - the constructor of the Maze class allows for 2 inputs, width and height
 - the constructor creates a basic maze, un-traversed with default Cells
 
-### `generate()`
+#### `generate()`
 
 - to create a maze with a path, call the generate() method on the Maze object, methods returns the Maze object's context
+- this sets the path within the grid, and alters the Cells
+- also sets the finalRoom property
+
+#### `getCell(x, y)`
+
+- method returns a Cell within the Maze at the specified x and y coordinates supplied ot the method
+
+#### `reset()`
+
+- method resets all the internal Cells back to default state
+- method also resets final room back to undefined default
+
+#### `checkStatus(x, y)`
+
+- method returns a boolean representing if the supplied coordinates match those of the final room as set by the generate method
+
+### Cell Class
+
+- A Cell is a multipurpose object holding pertinent and necessary information only about itself
+- A Cell has no knowledge of its sibling or its placement
+- A Cell can be extended/overwritten in order to fit the implementers needs
+
+#### `constructor()`
+
+- Cell constructor takes no arguments
+- constructor sets a Cell to its default state, all sides walled, and unvisited
+
+#### `reset()`
+
+- method resets all of a Cell's properties back to default: all sides walled and unvisited
+
+#### `toString()`
+
+- method returns the string representation of a large version of the cell
 
 ## Command-Line Setup Instructions
 
