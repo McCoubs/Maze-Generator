@@ -14,11 +14,30 @@ class Cell {
     }
 
     /**
+     * Returns property of Cell.
+     * @param value string corresponding to Cell property
+     * @returns {*}
+     */
+    getValue(value) {
+        return this[value];
+    }
+
+    /**
+     * Sets Cell property to value.
+     * @param property string corresponding to Cell property
+     * @param value is value to set to property
+     * @returns {*}
+     */
+    setValue(property, value) {
+        this[property] = value;
+    }
+
+    /**
      * Method sets all the Cells props back to default.
      */
     reset() {
-        this.top = 0;
-        this.bottom = 0;
+        this.up = 0;
+        this.down = 0;
         this.left = 0;
         this.right = 0;
         this.visited = false;
@@ -34,8 +53,8 @@ class Cell {
 
         // check if each side is wall or door, and append proper string per case
         
-        // top permutations
-        if (this.top === 0) {
+        // up permutations
+        if (this.up === 0) {
             stringImage += "+----------+\n|          |\n";
         } else {
             stringImage += "+--      --+\n|          |\n";
@@ -56,8 +75,8 @@ class Cell {
             stringImage += "            \n";
         }
 
-        // bottom permutations
-        if (this.bottom === 0) {
+        // down permutations
+        if (this.down === 0) {
             stringImage += "|          |\n+----------+\n";
         } else {
             stringImage += "|          |\n+--      --+\n";

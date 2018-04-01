@@ -2,6 +2,7 @@ let Maze = require('./Maze');
 let keypress = require('keypress');
 let console = require('better-console');
 
+// set keypress/standard input settings
 keypress(process.stdin);
 process.stdin.setRawMode(true);
 process.stdin.resume();
@@ -12,37 +13,121 @@ let height = dimensions[1] || 10;
 let width = dimensions[0] || 10;
 let easy  = dimensions[2] || false;
 
-// stet initial movement vars
+// set initial movement vars
 let currentPosition = [0, 0];
 let viewingMap = false;
-let visited = initVisited(width, height);
-let maze = new Maze(width, height).generate().getMaze();
-logString(maze[0][0].toString());
 
+// instantiate new maze
+let maze = new Maze(width, height).generate();
+logString(maze.getCell(0, 0).toString());
 
-function initVisited (width, height) {
-    let visited = [];
+/**
+ * Main logic operator, handles keypresses.
+ */
+process.stdin.on('keypress', function (ch, key) {
+    switch (key.name) {
+        // m key toggles showing the large version of map versus individual rooms
+        case 'm':
+            if (!viewingMap) {
+                drawLargeMaze();
+            } else {
+                logString(maze.getCell(currentPosition[0], currentPosition[1]).toString());
+            }
+            viewingMap = !viewingMap;
+            break;
+        // n key re-instantiates a new maze/game
+        case 'n':
+            maze = new Maze(width, height).generate();
+            currentPosition = [0, 0];
+            if (viewingMap) {
+                drawLargeMaze();
+            } else {
+                logString(maze.getCell(currentPosition[0], currentPosition[1]).toString());
+            }
+            break;
+        // e key toggles easy mode
+        case 'e':
+            easy = !easy;
+            if (viewingMap) {
+                drawLargeMaze();
+            }
+            break;
 
-    for (let x = 0; x < width; x++) {
-        visited[x] = [];
-        for (let y = 0; y < height; y++) {
-            visited[x][y] = 0;
-        }
+        // cases for movement options
+        case 'up':
+            movement("up");
+            break;
+        case 'down':
+            movement("down");
+            break;
+        case 'left':
+            movement("left");
+            break;
+        case 'right':
+            movement("right");
+            break;
     }
+    if (key && key.ctrl && key.name === 'c') {
+        process.exit();
+    }
+});
 
-    visited[0][0] = 1;
-
-    return visited;
+/**
+ * Clears console and then logs input string to console.
+ * @param string to log
+ */
+function logString(string) {
+    console.clear();
+    console.log(string);
 }
 
-function drawMap() {
+/**
+ * Method handles keypress directional logic.
+ * @param direction {string: up, down, right, left} is direction of keypress input.
+ */
+function movement(direction) {
+
+    // get current cell, and check if current intended direction is open
+    if (maze.getCell(currentPosition[0], currentPosition[1]).getValue(direction) === 1) {
+
+        // get intended axis
+        let axis = (direction === "up" || direction === "down") ? 0 : 1;
+        // get bool to determine if increasing or decreasing val based on direction
+        let increase = (direction === "down" || direction === "right");
+
+        // either increase or decrease based on
+        if (increase) {
+            currentPosition[axis]++;
+        } else {
+            currentPosition[axis]--;
+        }
+
+        // draw correct version of map
+        if (viewingMap) {
+            drawLargeMaze();
+        } else {
+            logString(maze.getCell(currentPosition[0], currentPosition[1]).toString());
+        }
+
+        // check if on final square, exit process if true
+        if (maze.checkStatus(currentPosition[0], currentPosition[1])) {
+            console.warn('You win!');
+            process.exit();
+        }
+    }
+}
+
+/**
+ * Prints out large version of a Maze.
+ */
+function drawLargeMaze() {
     let lines = [];
     let line;
     let line_bottom;
     let cell;
 
     for (let y = 0; y < height; y++) {
-        // prepend top
+        // prepend up
         if (y === 0) {
             line = '+';
             for (let x = 0; x < width; x++) {
@@ -55,11 +140,13 @@ function drawMap() {
         line_bottom = '+';
 
         for (let x = 0; x < width; x++) {
-            cell = maze[y][x];
+            cell = maze.getCell(y, x);
+
             if (currentPosition[1] === x && currentPosition[0] === y) {
                 line += ' @ ';
-            }
-            else {
+            } else if (y === maze.finalRoom[0] && x === maze.finalRoom[1]) {
+                line += ' X ';
+            } else {
                 line += '   ';
             }
             if (cell[1] && ((visited[x][y] || visited[x+1][y]) || easy)) {
@@ -84,104 +171,8 @@ function drawMap() {
     lines.forEach(function (l) {
         console.log(l);
     });
-    checkStatus();
-}
-
-function checkStatus() {
-    if (currentPosition[0] === (height - 1) && currentPosition[1] === (width - 1)) {
+    if (maze.checkStatus(currentPosition[0], currentPosition[1])) {
         console.warn('You win!');
         process.exit();
     }
 }
-
-function logString(string) {
-    console.clear();
-    console.log(string);
-}
-
-process.stdin.on('keypress', function (ch, key) {
-    switch (key.name) {
-        case 'm':
-            if (!viewingMap) {
-                drawMap();
-            }
-            else {
-                logString(maze[currentPosition[0]][currentPosition[1]].toString());
-            }
-            viewingMap = !viewingMap;
-            break;
-        case 'e':
-            easy = !easy;
-            if (viewingMap) {
-                drawMap();
-            }
-            break;
-        case 'n':
-            maze = new Maze(width, height).generate().getMaze();
-            currentPosition = [0,0];
-            visited = initVisited(width, height);
-            if (viewingMap) {
-                drawMap();
-            }
-            else {
-                logString(maze[currentPosition[0]][currentPosition[1]].toString());
-                checkStatus();
-            }
-            break;
-        case 'up':
-            if (maze[currentPosition[0]][currentPosition[1]].top === 1) {
-                currentPosition[0]--;
-                visited[currentPosition[1]][currentPosition[0]] = 1;
-                if (viewingMap) {
-                    drawMap();
-                }
-                else {
-                    logString(maze[currentPosition[0]][currentPosition[1]].toString());
-                    checkStatus();
-                }
-            }
-            break;
-        case 'down':
-            if (maze[currentPosition[0]][currentPosition[1]].bottom === 1) {
-                currentPosition[0]++;
-                visited[currentPosition[1]][currentPosition[0]] = 1;
-                if (viewingMap) {
-                    drawMap();
-                }
-                else {
-                    logString(maze[currentPosition[0]][currentPosition[1]].toString());
-                    checkStatus();
-                }
-            }
-            break;
-        case 'left':
-            if (maze[currentPosition[0]][currentPosition[1]].left === 1) {
-                currentPosition[1]--;
-                visited[currentPosition[1]][currentPosition[0]] = 1;
-                if (viewingMap) {
-                    drawMap();
-                }
-                else {
-                    logString(maze[currentPosition[0]][currentPosition[1]].toString());
-                    checkStatus();
-                }
-            }
-            break;
-        case 'right':
-            if (maze[currentPosition[0]][currentPosition[1]].right === 1) {
-                currentPosition[1]++;
-                visited[currentPosition[1]][currentPosition[0]] = 1;
-                if (viewingMap) {
-                    drawMap();
-                }
-                else {
-                    logString(maze[currentPosition[0]][currentPosition[1]].toString());
-                    checkStatus();
-                }
-            }
-            break;
-    }
-    if (key && key.ctrl && key.name === 'c') {
-        process.exit();
-    }
-});

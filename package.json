@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Simple Command Line Maze Game",
   "author": "Spencer McCoubrey spencemcc@gmail.com",
+  "main": "src/main.js",
   "dependencies": {
     "keypress": "*",
     "better-console": "*"

@@ -33,6 +33,15 @@ class Maze {
     }
 
     /**
+     * Method gets cell at specified coordinates.
+     * @param x coordinate of grid
+     * @param y coordinate of grid
+     */
+    getCell(x, y) {
+        return this.grid[x][y];
+    }
+
+    /**
      * Method resets the Maze back to basic instantiation.
      */
     reset() {
@@ -40,7 +49,7 @@ class Maze {
         // loop through all created Cells and reset each one
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
-                this.grid[i][j].reset();
+                this.getCell(i, j).reset();
             }
         }
     }
@@ -48,29 +57,30 @@ class Maze {
     /**
      * Method runs through the basic maze and creates the layout.
      * @desc uses the backtracking method to create the maze.
+     * @returns Maze obj
      */
     generate() {
 
-        // Set a random position to start from
-        let currentCell = [Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height)];
+        // Set starting position
+        let currentCell = [0, 0];
         // set our path in order to backtrack
         let path = [currentCell];
         // set visited of current cell to true
-        this.grid[currentCell[0]][currentCell[1]].visited = true;
+        this.getCell(currentCell[0], currentCell[1]).setValue("visited", true);
 
         // Loop through all available cell positions
         for (let visited = 1; visited < this.totalCells; visited++) {
 
             // get all neighbouring cells
-            let potential = [[currentCell[0]-1, currentCell[1], "top", "bottom"],
+            let potential = [[currentCell[0]-1, currentCell[1], "up", "down"],
                 [currentCell[0], currentCell[1]+1, "right", "left"],
-                [currentCell[0]+1, currentCell[1], "bottom", "top"],
+                [currentCell[0]+1, currentCell[1], "down", "up"],
                 [currentCell[0], currentCell[1]-1, "left", "right"]];
             let neighbors = [];
 
             // Determine if each neighboring cell is within grid, and whether it has already been visited
             for (let k = 0; k < 4; k++) {
-                if (potential[k][0] > -1 && potential[k][0] < this.width && potential[k][1] > -1 && potential[k][1] < this.height && !this.grid[potential[k][0]][potential[k][1]].visited) {
+                if (potential[k][0] > -1 && potential[k][0] < this.width && potential[k][1] > -1 && potential[k][1] < this.height && !this.getCell([potential[k][0]], [potential[k][1]]).getValue("visited")) {
                     neighbors.push(potential[k]);
                 }
             }
@@ -82,11 +92,11 @@ class Maze {
                 let nextCell = neighbors[Math.floor(Math.random()*neighbors.length)];
 
                 // Remove the wall between the current cell and the chosen neighboring cell
-                this.grid[currentCell[0]][currentCell[1]][nextCell[2]] = 1;
-                this.grid[nextCell[0]][nextCell[1]][nextCell[3]] = 1;
+                this.getCell(currentCell[0], currentCell[1]).setValue(nextCell[2], 1);
+                this.getCell(nextCell[0], nextCell[1]).setValue(nextCell[3], 1);
 
                 // Mark the neighbor as visited, and set it as the current cell
-                this.grid[nextCell[0]][nextCell[1]].visited = true;
+                this.getCell(nextCell[0], nextCell[1]).setValue("visited", true);
                 currentCell = [nextCell[0], nextCell[1]];
 
                 // push the newly visited to the cellpath
@@ -97,7 +107,12 @@ class Maze {
                 currentCell = path.pop();
             }
         }
+        this.finalRoom = currentCell;
         return this;
+    }
+
+    checkStatus(x, y) {
+        return (x === this.finalRoom[0] && y === this.finalRoom[1]);
     }
 }
 
