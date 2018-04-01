@@ -8,17 +8,32 @@
 
 - All of the functionality within a Maze and Cells are defined within their methods and respective files 
 
+## General Usage
+
+- To use the Maze or Cell classes, import them as your project needs
+- The constructor and the generate() method are the 2 basic uses of the Maze class
+  - all other methods and their prototypes are defined within the Maze Class
+
+### Constructor
+
+- the constructor of the Maze class allows for 2 inputs, width and height
+- the constructor creates a basic maze, un-traversed with default Cells
+
+### `generate()`
+
+- to create a maze with a path, call the generate() method on the Maze object, methods returns the Maze object's context
+
 ## Command-Line Setup Instructions
 
 - Clone the repo locally onto your system
 - Navigate to main directory within a terminal and run `npm install`
 - run ```node ~pathToSrcFolder\main {width} {height} {easy}``` from your terminal
-- {width} and {height} correspond to the desired width and height of the Maze generated
-- {easy} corresponds to a boolean, true or false(by default), sets easy mode for user
+  - {width} and {height} correspond to the desired width and height of the Maze generated
+  - {easy} corresponds to a boolean, true or false(by default), sets easy mode for user
 
 ## Command-Line Running Instructions
 
-### Navigation/Terminal Outputs
+### Terminal Outputs
 
 #### Winning
 Upon arriving at the final room, the user will be congratulated, and the terminal process will end
@@ -39,6 +54,8 @@ The terminal will output 3 different formats of the maze based on the user input
 |          |    +---+---+    +---+---+
 +----------+
 ```
+
+### Navigation 
 
 #### Arrow Keys
 Navigate the Maze using the arrow keys, where there is a door in a room, you will be allowed to move through
