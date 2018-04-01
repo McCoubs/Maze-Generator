@@ -1,12 +1,12 @@
 {
-  "name": "command-line-maze",
+  "name": "maze-generator",
   "version": "1.0.0",
-  "description": "Simple Command Line Maze Game",
+  "description": "Maze Generator",
   "author": "Spencer McCoubrey spencemcc@gmail.com",
   "main": "src/main.js",
   "dependencies": {
-    "keypress": "*",
-    "better-console": "*"
+    "keypress": "0.2.1",
+    "better-console": "1.0.1"
   },
   "repository": {
     "type": "git",
