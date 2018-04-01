@@ -67,6 +67,8 @@ process.stdin.on('keypress', function (ch, key) {
             movement("right");
             break;
     }
+
+    // exit on ctrl + c command
     if (key && key.ctrl && key.name === 'c') {
         process.exit();
     }
