@@ -20,7 +20,7 @@
 
 ### Navigation/Terminal Outputs
 
-### `Winning`
+#### Winning
 Upon arriving at the final room, the user will be congratulated, and the terminal process will end
 
 #### User Information
@@ -40,14 +40,14 @@ The terminal will output 3 different formats of the maze based on the user input
 +----------+
 ```
 
-### `Arrow Keys`
+#### Arrow Keys
 Navigate the Maze using the arrow keys, where there is a door in a room, you will be allowed to move through
 
-### `M Key`
+#### M Key
 The `M` key allows the user to switch between the room by room display or the overall maze view
 
-### `N Key`
+#### N Key
 The `N` key allows the user to reset the maze and generate a new one at random, keeping all other presets
 
-### `E Key`
+#### E Key
 The `E` key allows the user to toggle the easy mode preset. On the large map view, this shows where open doors are
