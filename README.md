@@ -60,7 +60,7 @@
 
 - Clone the repo locally onto your system
 - Navigate to main directory within a terminal and run `npm install`
-- run ```node ~pathToSrcFolder\main {width} {height} {easy}``` from your terminal
+- run ```node ~pathToParentDirectory/src/main {width} {height} {easy}``` from your terminal
   - {width} and {height} correspond to the desired width and height of the Maze generated
   - {easy} corresponds to a boolean, true or false(by default), sets easy mode for user
 
@@ -101,3 +101,9 @@ The `N` key allows the user to reset the maze and generate a new one at random, 
 
 #### E Key
 The `E` key allows the user to toggle the easy mode preset. On the large map view, this shows where open doors are
+
+## Running Tests
+
+- to run tests, first run `npm install` in parent directory in order to install the jasmine testing suite
+- next, run `node ~pathToParentDirectory/test-lib/test-runner`, output of the tests will be printed out to the terminal
+- to add to tests, file names must be suffixed with `-test` and placed within the `tests` subfolder of the `test-lib` directory
