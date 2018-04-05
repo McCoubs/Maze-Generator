@@ -13,9 +13,9 @@ class Maze {
     constructor(width, height) {
 
         // set inputs
-        this.width = width;
-        this.height = height;
-        this.totalCells = width*height;
+        this.width = width || 0;
+        this.height = height || 0;
+        this.totalCells = this.width*this.height;
         this.grid = [];
         this.finalRoom = [-1, -1];
 
